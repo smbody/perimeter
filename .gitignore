@@ -1,0 +1,46 @@
+#Idea files
+.idea
+
+
+#Compiled Object files, Static and Dynamic libs (Shared Objects)
+perimeter
+*.o
+*.a
+*.so
+
+
+# Folders
+_obj
+_test
+projectFilesBackup
+
+
+# Architecture specific extensions/prefixes
+*.[568vq]
+[568vq].out
+.DS_Store
+
+# Configs
+*.cfg
+
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+
+_testmain.go
+
+
+*.exe
+*.test
+*.prof
+*.sh
+*.js
+*.json
+*.bat
+*.iml
+
+*.sublime-project
+*.sublime-workspace
