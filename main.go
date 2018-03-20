@@ -14,7 +14,7 @@ func main() {
 	authorization.RegisterHandlers()
 
 	port := config.Port
-	fmt.Printf("Start on %v port", port)
+	fmt.Println("Start on port", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
 		panic(err)
 	}

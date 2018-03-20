@@ -4,5 +4,10 @@ const (
 	Port = 8400
 )
 
-// Глобальный секретный ключ
-var SigningSecretKey = []byte("top_secret")
+const (
+	AccessTokenLifeMinutes = 15
+)
+
+func GetSecretApp(appId string) string {
+	return "gds64okey"
+}

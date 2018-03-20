@@ -8,7 +8,7 @@ import (
 	"github.com/smbody/perimeter/data"
 )
 
-func authLogin(rw http.ResponseWriter, req *http.Request) {
+func authToken(rw http.ResponseWriter, req *http.Request) {
 
 	request, err := authRequest(req)
 	if err != "" {
@@ -17,24 +17,28 @@ func authLogin(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// получить user-a
-	username := request.Claims["username"]
-	password := request.Claims["password"]
-	if username == nil || password == nil {
-		fmt.Println(config.HttpErrorBadUserName)
+	// для начала проверим app
+	appId := request.Claims["appId"]
+	if request.AppId != appId {
 		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	user, err_u := data.GetUser(request.AppId, username.(string), password.(string))
+	// проверим токен
+	refresh_token := request.Claims["refresh_token"]
+	if refresh_token == nil {
+		fmt.Println(config.HttpErrorBadRefreshToken)
+		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	// обновляем токен
+	user, err_u := data.RefreshTokens(request.AppId, refresh_token.(string))
 	if err_u != nil {
 		fmt.Println(err_u.Error())
 		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
-
-	// обновляем токены
-	user.Login(request.AppId)
 
 	// сформировать токен
 	token := authResponse(request.AppId, user)
