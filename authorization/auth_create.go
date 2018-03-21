@@ -46,7 +46,7 @@ func authCreate(rw http.ResponseWriter, req *http.Request) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// отдаем токен клиенту
-	tokenString, err := token.SignedString([]byte(request.Secret()))
+	tokenString, err := token.SignedString(request.SecretSign())
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return

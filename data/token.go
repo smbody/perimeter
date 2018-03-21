@@ -1,19 +1,21 @@
 package data
 
 import (
-	"github.com/dgrijalva/jwt-go"
+// "github.com/smbody/perimeter/config"
 )
 
 // var tokens
 
-func SaveToken(app string, user *User, token *jwt.Token) {
-
-}
-
-func ValidateToken(app string, token *jwt.Token) bool {
-	return true
-}
-
 func CreateAccessToken(app string, user *User) string {
 	return "frctcnjrty"
+}
+
+func ValidateToken(app string, token string) (*User, string) {
+	user, err := GetUser(app, "User for token: "+token, "")
+	if err != nil {
+		return nil, err.Error()
+	}
+	user.Id = token
+
+	return user, ""
 }

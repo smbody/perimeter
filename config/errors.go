@@ -7,4 +7,5 @@ const (
 	HttpErrorBadRequestToken  = "Bad Request. Token validation failed."
 	HttpErrorBadUserName      = "Unknown user name. Authentification failed."
 	HttpErrorBadRefreshToken  = "Bad refresh token. Authentification failed."
+	HttpErrorBadAccessToken   = "Bad access token. Authentification failed."
 )

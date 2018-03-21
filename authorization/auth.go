@@ -12,6 +12,7 @@ import (
 )
 
 func RegisterHandlers() {
+	http.HandleFunc("/auth", authUser)
 	http.HandleFunc("/auth/create", authCreate)
 	http.HandleFunc("/auth/login", authLogin)
 	http.HandleFunc("/auth/token", authToken)

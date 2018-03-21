@@ -1,5 +1,9 @@
 package data
 
+import (
+	"encoding/json"
+)
+
 type User struct {
 	Id   string
 	name string
@@ -7,6 +11,13 @@ type User struct {
 
 func (u *User) FullName() string {
 	return u.name
+}
+
+func (u *User) Json() []byte {
+	if result, err := json.Marshal(u); err == nil {
+		return result
+	}
+	return nil
 }
 
 func (u *User) AccessToken(app string) string {
