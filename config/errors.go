@@ -5,7 +5,8 @@ const (
 	HttpErrorBadRequestAppId  = "Bad Request. Missing appId."
 	HttpErrorBadRequestMethod = "Bad Request."
 	HttpErrorBadRequestToken  = "Bad Request. Token validation failed."
-	HttpErrorBadUserName      = "Unknown user name. Authentification failed."
-	HttpErrorBadRefreshToken  = "Bad refresh token. Authentification failed."
-	HttpErrorBadAccessToken   = "Bad access token. Authentification failed."
+	AuthErrorBadUserName      = "Unknown user name. Authentification failed."
+	AuthErrorBadUserPassword  = "Wrong password. Authentification failed."
+	AuthErrorBadRefreshToken  = "Bad refresh token. Authentification failed."
+	AuthErrorBadAccessToken   = "Bad access token. Authentification failed."
 )

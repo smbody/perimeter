@@ -27,21 +27,29 @@ func authToken(rw http.ResponseWriter, req *http.Request) {
 	// проверим токен
 	refresh_token := request.Claims["refresh_token"]
 	if refresh_token == nil {
-		fmt.Println(config.HttpErrorBadRefreshToken)
+		fmt.Println(config.AuthErrorBadRefreshToken)
 		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	// обновляем токен
-	user, err_u := data.RefreshTokens(request.AppId, refresh_token.(string))
+	// обновляем токены
+	tokens, err_u := data.RefreshToken(request.AppId, refresh_token.(string))
 	if err_u != nil {
 		fmt.Println(err_u.Error())
 		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	// сформировать токен
-	token := authResponse(request.AppId, user)
+	// информация по пользователю
+	user, err_u := data.GetUserById(request.AppId, tokens.UserId)
+	if err_u != nil {
+		fmt.Println(err_u.Error())
+		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	// сформировать токен в ответ
+	token := authResponse(request.AppId, user, tokens)
 
 	// отдаем токен клиенту
 	tokenString, err_t := token.SignedString(request.SecretSign())

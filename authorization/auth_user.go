@@ -22,20 +22,28 @@ func authUser(rw http.ResponseWriter, req *http.Request) {
 
 	// токен
 	header := strings.Split(req.Header.Get("Authorization"), " ")
-	if len(header) == 2 {
-		user, err := data.ValidateToken(appId, header[1])
-		if user != nil {
-			// если удалось аутентифицировать, отдаем юзера
-			rw.Header().Set("Content-Type", "app/json")
-			rw.Write(user.Json())
-			return
-		} else {
-			fmt.Println("Error: ", err)
-		}
-	} else {
+	if len(header) != 2 {
 		fmt.Println("Error: ", config.HttpErrorBadRequestToken)
+		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 	}
 
-	// если не удалось - вернуть 401
-	http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+	// проверим токен
+	token, err := data.ValidateToken(appId, header[1])
+	if err != nil {
+		fmt.Println(err.Error())
+		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	// информация по пользователю
+	user, err_u := data.GetUserById(appId, token.UserId)
+	if err_u != nil {
+		fmt.Println(err_u.Error())
+		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	// если все удалось, отдаем юзера
+	rw.Header().Set("Content-Type", "app/json")
+	rw.Write(user.Json())
 }

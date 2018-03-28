@@ -1,43 +1,57 @@
 package data
 
 import (
-	"encoding/json"
+	"errors"
+	"time"
+
+	"github.com/smbody/perimeter/config"
+	"github.com/smbody/perimeter/dao"
+	"github.com/smbody/perimeter/model"
 )
 
-type User struct {
-	Id   string
-	name string
-}
-
-func (u *User) FullName() string {
-	return u.name
-}
-
-func (u *User) Json() []byte {
-	if result, err := json.Marshal(u); err == nil {
-		return result
+// найдем пользователя по логин/пароль
+func GetUser(app string, name string, pass string) (*model.User, error) {
+	user, err := dao.GetUser(name)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+
+	// проверим пароль
+	password := config.GetPasswordHash(pass + user.Salt())
+	if user.Password() != password {
+		return nil, errors.New(config.AuthErrorBadUserPassword)
+	}
+
+	return user, nil
 }
 
-func (u *User) AccessToken(app string) string {
-	return app
+// найдем пользователя по id
+func GetUserById(app string, id string) (*model.User, error) {
+	return dao.GetUserById(id)
 }
 
-func (u *User) RefreshToken(app string) string {
-	return app
-}
+// создает и сохраняет новые токены
+func Login(app string, user string) *model.AccessToken {
+	// сгенерировать новые токены
+	ts := time.Now()
 
-func (u *User) Login(app string) {
+	access := &model.Token{
+		Token:   config.CreateToken(),
+		Created: ts,
+		Expired: ts.Add(time.Minute * config.AccessTokenLifeMinutes)}
 
-}
+	refresh := &model.Token{
+		Token:   config.CreateToken(),
+		Created: ts,
+		Expired: ts.Add(time.Minute * config.AccessTokenLifeMinutes)}
 
-func RefreshTokens(app string, token string) (*User, error) {
-	return GetUser(app, token, "")
-}
+	token := &model.AccessToken{
+		AppId:   app,
+		UserId:  user,
+		Access:  *access,
+		Refresh: *refresh}
 
-func GetUser(app string, name string, pass string) (*User, error) {
-	user := User{Id: app, name: name}
+	dao.UpdateToken(token)
 
-	return &user, nil
+	return token
 }

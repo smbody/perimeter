@@ -3,12 +3,11 @@ package authorization
 import (
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/smbody/perimeter/config"
-	"github.com/smbody/perimeter/data"
+	"github.com/smbody/perimeter/model"
 )
 
 func RegisterHandlers() {
@@ -79,21 +78,19 @@ func authRequest(req *http.Request) (*AuthRequest, string) {
 	return request, ""
 }
 
-func authResponse(appId string, user *data.User) *jwt.Token {
-
-	// сформировать токен
-	ts := time.Now()
+func authResponse(appId string, user *model.User, token *model.AccessToken) *jwt.Token {
+	// сформировать jwt-токен
 	claims := jwt.MapClaims{}
 	claims["iss"] = "perimeter"
 	claims["sub"] = "access_token"
 	claims["appId"] = appId
 	claims["user"] = user.Id
 	claims["userName"] = user.FullName()
-	claims["access_token"] = user.AccessToken(appId)
-	claims["refresh_token"] = user.RefreshToken(appId)
-	claims["exp"] = ts.Add(time.Minute * config.AccessTokenLifeMinutes).Unix()
-	claims["ts"] = ts
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	claims["access_token"] = token.Access.Token
+	claims["refresh_token"] = token.Refresh.Token
+	claims["exp"] = token.Access.Expired
+	claims["ts"] = token.Access.Created
+	result := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token
+	return result
 }

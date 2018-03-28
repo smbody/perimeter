@@ -21,7 +21,7 @@ func authLogin(rw http.ResponseWriter, req *http.Request) {
 	username := request.Claims["username"]
 	password := request.Claims["password"]
 	if username == nil || password == nil {
-		fmt.Println(config.HttpErrorBadUserName)
+		fmt.Println(config.AuthErrorBadUserName)
 		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
@@ -33,11 +33,11 @@ func authLogin(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// обновляем токены
-	user.Login(request.AppId)
+	// создать токены
+	tokens := data.Login(request.AppId, user.Id)
 
-	// сформировать токен
-	token := authResponse(request.AppId, user)
+	// сформировать токен в ответ
+	token := authResponse(request.AppId, user, tokens)
 
 	// отдаем токен клиенту
 	tokenString, err_t := token.SignedString(request.SecretSign())
