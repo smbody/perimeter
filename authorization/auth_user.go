@@ -26,7 +26,6 @@ func authUser(rw http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error: ", config.HttpErrorBadRequestToken)
 		http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 	}
-
 	// проверим токен
 	token, err := data.ValidateToken(appId, header[1])
 	if err != nil {

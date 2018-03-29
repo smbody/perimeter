@@ -48,6 +48,8 @@ func authToken(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	fmt.Println("refresh token")
+	fmt.Println("access token", tokens.Access)
 	// сформировать токен в ответ
 	token := authResponse(request.AppId, user, tokens)
 

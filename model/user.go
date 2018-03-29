@@ -5,22 +5,18 @@ import (
 )
 
 type User struct {
-	Id       string `bson:"Id,omitempty" json:"uid"`
-	name     string `bson:"name,omitempty" json:"name"`
-	password string `bson:"password" json:"-"`
-	passsalt string `bson:"passsalt" json:"-"`
+	Id       string `bson:"_id" json:"uid"`
+	Name     string `bson:"name" json:"name"`
+	Password string `bson:"password" json:"-"`
+	Passsalt string `bson:"passsalt" json:"-"`
 }
 
 func (u *User) FullName() string {
-	return u.name
-}
-
-func (u *User) Password() string {
-	return u.password
+	return u.Name
 }
 
 func (u *User) Salt() string {
-	return u.passsalt
+	return u.Passsalt
 }
 
 func (u *User) Json() []byte {
@@ -28,4 +24,11 @@ func (u *User) Json() []byte {
 		return result
 	}
 	return nil
+}
+
+func CreateUser(name string, pass string, salt string) *User {
+	return &User{
+		Name:     name,
+		Password: pass,
+		Passsalt: salt}
 }

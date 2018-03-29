@@ -2,7 +2,6 @@ package data
 
 import (
 	"errors"
-	"time"
 
 	"github.com/smbody/perimeter/config"
 	"github.com/smbody/perimeter/dao"
@@ -16,9 +15,9 @@ func GetUser(app string, name string, pass string) (*model.User, error) {
 		return nil, err
 	}
 
+	password := pass + user.Salt() // подсолим
 	// проверим пароль
-	password := config.GetPasswordHash(pass + user.Salt())
-	if user.Password() != password {
+	if !config.PasswordValidate(user.Password, password) {
 		return nil, errors.New(config.AuthErrorBadUserPassword)
 	}
 
@@ -30,28 +29,25 @@ func GetUserById(app string, id string) (*model.User, error) {
 	return dao.GetUserById(id)
 }
 
-// создает и сохраняет новые токены
-func Login(app string, user string) *model.AccessToken {
-	// сгенерировать новые токены
-	ts := time.Now()
+// добавление нового пользователя
+func CreateUser(app string, name string, pass string) (*model.User, error) {
+	// пароль должен быть корректным
+	if len(pass)+config.SaltSize > config.PasswordSize || len(pass) == 0 {
+		return nil, errors.New(config.AuthErrorBadUserPassword)
+	}
 
-	access := &model.Token{
-		Token:   config.CreateToken(),
-		Created: ts,
-		Expired: ts.Add(time.Minute * config.AccessTokenLifeMinutes)}
+	salt := config.CreateSalt()
+	password, err := config.GetPasswordHash(pass + salt) // подсолим
+	if err != nil {
+		return nil, errors.New(config.AuthErrorBadUserPassword)
+	}
 
-	refresh := &model.Token{
-		Token:   config.CreateToken(),
-		Created: ts,
-		Expired: ts.Add(time.Minute * config.AccessTokenLifeMinutes)}
+	user := model.CreateUser(name, password, salt)
 
-	token := &model.AccessToken{
-		AppId:   app,
-		UserId:  user,
-		Access:  *access,
-		Refresh: *refresh}
+	user, err = dao.AddUser(user)
+	if err != nil {
+		return nil, err
+	}
 
-	dao.UpdateToken(token)
-
-	return token
+	return user, nil
 }

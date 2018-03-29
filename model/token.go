@@ -13,6 +13,6 @@ type Token struct {
 type AccessToken struct {
 	AppId   string `bson:"aid,omitempty" json:"-"`
 	UserId  string `bson:"uid,omitempty" json:"-"`
-	Access  Token  `bson:"access,omitempty" json:"access"`
-	Refresh Token  `bson:"refresh" json:"refresh"`
+	Access  *Token `bson:"access,omitempty" json:"access"`
+	Refresh *Token `bson:"refresh" json:"refresh"`
 }

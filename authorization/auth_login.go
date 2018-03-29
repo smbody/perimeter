@@ -36,6 +36,8 @@ func authLogin(rw http.ResponseWriter, req *http.Request) {
 	// создать токены
 	tokens := data.Login(request.AppId, user.Id)
 
+	fmt.Println("login token")
+	fmt.Println("access token", tokens.Access)
 	// сформировать токен в ответ
 	token := authResponse(request.AppId, user, tokens)
 

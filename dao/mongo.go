@@ -1,11 +1,11 @@
 package dao
 
 import (
+	"github.com/smbody/perimeter/config"
+	"github.com/smbody/perimeter/model"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"sync"
-
-	"github.com/smbody/perimeter/model"
 )
 
 type mongoDb struct {
@@ -66,7 +66,7 @@ func (db *mongoDb) GetUser(name string) (*model.User, error) {
 
 func (db *mongoDb) GetUserById(id string) (*model.User, error) {
 	var user model.User
-	err := getUsers().Find(bson.M{"Id": id}).One(&user)
+	err := getUsers().Find(bson.M{"_id": id}).One(&user)
 	return &user, err
 }
 
@@ -90,4 +90,16 @@ func (db *mongoDb) UpdateToken(token *model.AccessToken) error {
 		bson.M{"aid": token.AppId, "uid": token.UserId, "access": token.Access, "refresh": token.Refresh})
 
 	return err
+}
+
+func (db *mongoDb) AddUser(user *model.User) (*model.User, error) {
+	// id сами делаем, потому что используем string
+	user.Id = config.GetHash(user.FullName() + user.Salt())
+
+	err := getUsers().Insert(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return db.GetUser(user.Name)
 }

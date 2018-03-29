@@ -5,7 +5,7 @@ import (
 )
 
 type Db interface {
-	// AddUser(user *model.User) error
+	AddUser(user *model.User) (*model.User, error)
 	GetUser(name string) (*model.User, error)
 	GetUserById(id string) (*model.User, error)
 	UpdateToken(token *model.AccessToken) error
@@ -19,9 +19,9 @@ func Register(db Db) {
 	instance = db
 }
 
-// func AddUser(user *model.User) error {
-// 	return instance.AddUser(user)
-// }
+func AddUser(user *model.User) (*model.User, error) {
+	return instance.AddUser(user)
+}
 
 func GetUser(name string) (*model.User, error) {
 	return instance.GetUser(name)
