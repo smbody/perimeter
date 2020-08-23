@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+
+  # Production container. Builds in release mode and run. Project will be restarted on every abort.
+  prod:
+    hostname: perimeter-server
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: perimeter_base
+    volumes:
+      - .:/perimeter
+    working_dir: /perimeter
+    ports:
+      - "8400:8400"  # Opened ports
+    links:
+      - perimeter-data
+    command: bash -c "go mod download && go build && perimeter"
+
+
+  perimeter-data:
+    image: mongo:latest
+    container_name: "perimeter-data"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_DATABASE=testdb
+    volumes:
+      - ./.data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --logpath=/dev/null # --quiet
