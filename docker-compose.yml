@@ -17,7 +17,8 @@ services:
       - "8400:8400"  # Opened ports
     links:
       - perimeter-data
-    command: bash -c "go mod download && go build && pwd && ls -a && perimeter"
+#    command: bash -c "go mod download && go build && pwd && ls -a && perimeter"
+    command: bash -c "go run main.go"
 
   perimeter-data:
     image: mongo:latest
