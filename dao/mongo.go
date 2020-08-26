@@ -15,7 +15,7 @@ type mongoDb struct {
 }
 
 const (
-	mongoHost        = "perimeter-data"
+	mongoHost        = "perimeter-data:28018"
 	mongoDB          = "perimeter"
 	collectionUsers  = "users"
 	collectionTokens = "tokens"
@@ -30,7 +30,7 @@ func (c *mongoDb) init() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Mongo status ok!")
+	fmt.Printf("Mongo status ok!")
 
 	c.Session = session
 	c.Session.SetMode(mgo.Monotonic, true)
