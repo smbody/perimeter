@@ -18,7 +18,7 @@ services:
     links:
       - perimeter-data
 #    command: bash -c "go mod download && go build && pwd && ls -a && perimeter"
-    command: bash -c "go run main.go"
+    command: bash -c "go mod download && go build && ./perimeter"
 
   perimeter-data:
     image: mongo:latest

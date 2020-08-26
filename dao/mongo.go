@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"github.com/smbody/perimeter/config"
 	"github.com/smbody/perimeter/model"
 	"gopkg.in/mgo.v2"
@@ -14,7 +15,7 @@ type mongoDb struct {
 }
 
 const (
-	mongoHost        = "localhost"
+	mongoHost        = "perimeter-data"
 	mongoDB          = "perimeter"
 	collectionUsers  = "users"
 	collectionTokens = "tokens"
@@ -24,10 +25,12 @@ var mongo *mongoDb
 var once sync.Once
 
 func (c *mongoDb) init() error {
+	fmt.Println("Dialing to mongo", mongoHost)
 	session, err := mgo.Dial(mongoHost)
 	if err != nil {
 		return err
 	}
+	fmt.Println("Mongo status ok!")
 
 	c.Session = session
 	c.Session.SetMode(mgo.Monotonic, true)

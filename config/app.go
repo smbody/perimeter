@@ -18,7 +18,9 @@ const (
 
 var applications = map[string]string{
 	"appLimsMobile": "Lims-gds64Okey", // md5 = 19888fab31544bf6bcdf1210936c68c1
-	"appTest":       "gds64okey"}      // md5 = 55b948f13d282a4e2d86adbc73e825f2
+	"appTest":       "gds64okey",      // md5 = 55b948f13d282a4e2d86adbc73e825f2
+	"fastride":      "frq1447pdu",     // md5 = 439199b179d0a8258642981b288a6d8b
+}
 
 var apps map[string]string
 
